@@ -19,16 +19,31 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.annotation.SuppressLint;
+import android.location.Location;
+import android.os.Looper;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+
 public class LocationHelper {
 
     public static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
+    private static final float DEFAULT_ZOOM = 15f;
 
     private final Context context;
     private final Activity activity;
+    private final FusedLocationProviderClient fusedLocationClient;
+    private LocationCallback locationCallback;
+    private GoogleMap mMap;
 
     public LocationHelper(Context context, Activity activity) {
         this.context = context;
         this.activity = activity;
+        fusedLocationClient = new FusedLocationProviderClient(context);
+        createLocationCallback();
     }
 
     public boolean checkLocationPermission() {
@@ -64,9 +79,51 @@ public class LocationHelper {
         dialog.show();
     }
 
-    public void addMarkerAndMoveCamera(GoogleMap mMap, LatLng latLng, float zoomLevel) {
-        if (mMap != null) {
+    public void getCurrentLocation(GoogleMap mMap) {
+        this.mMap = mMap;
+        if (checkLocationPermission()) {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(activity, location -> {
+                        if (location != null) {
+                            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            addMarkerAndMoveCamera(latLng, DEFAULT_ZOOM);
+                        } else {
+                            requestNewLocationData();
+                        }
+                    });
+        } else {
+            requestLocationPermission();
+        }
+    }
 
+    private void requestNewLocationData() {
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(0);
+        locationRequest.setFastestInterval(0);
+        locationRequest.setNumUpdates(1);
+
+        fusedLocationClient.requestLocationUpdates(
+                locationRequest,
+                locationCallback,
+                null
+        );
+    }
+
+    private void createLocationCallback() {
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                Location location = locationResult.getLastLocation();
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                addMarkerAndMoveCamera(latLng, DEFAULT_ZOOM);
+            }
+        };
+    }
+
+    public void addMarkerAndMoveCamera(LatLng latLng, float zoomLevel) {
+        if (mMap != null) {
             // Add marker to the map
             MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Current Location");
             mMap.addMarker(markerOptions);

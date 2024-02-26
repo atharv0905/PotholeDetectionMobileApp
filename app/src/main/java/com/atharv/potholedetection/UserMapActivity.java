@@ -61,8 +61,7 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
                 // Handle button click to get current location (if permissions are already granted)
                 if (locationHelper.checkLocationPermission()) {
                     if (locationHelper.isLocationEnabled()) {
-                        LatLng currentLatLng = new LatLng(19.076090, 72.877426);
-                        locationHelper.addMarkerAndMoveCamera(mMap, currentLatLng, 15.0f);
+                        locationHelper.getCurrentLocation(mMap);
                     } else {
                         locationHelper.showEnableLocationDialog();
                     }
@@ -78,8 +77,11 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        LatLng currentLatLng = new LatLng(19.076090, 72.877426);
-        locationHelper.addMarkerAndMoveCamera(mMap, currentLatLng, 12.0f);
+        // Add a marker and move the camera to a specific location
+        LatLng specificLatLng = new LatLng(19.076090, 72.877426);
+        mMap.addMarker(new MarkerOptions().position(specificLatLng).title("Marker Title"));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(specificLatLng, 13.0f));
+
     }
 
     // Handle permission request result
