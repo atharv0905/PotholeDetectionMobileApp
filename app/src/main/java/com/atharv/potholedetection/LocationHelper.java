@@ -13,6 +13,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 public class LocationHelper {
 
     public static final int LOCATION_PERMISSION_REQUEST_CODE = 1001;
@@ -56,5 +62,18 @@ public class LocationHelper {
             }
         });
         dialog.show();
+    }
+
+    public void addMarkerAndMoveCamera(GoogleMap mMap, LatLng latLng, float zoomLevel) {
+        if (mMap != null) {
+
+            // Add marker to the map
+            MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("Current Location");
+            mMap.addMarker(markerOptions);
+
+            // Move camera to the specified location with the specified zoom level
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, zoomLevel);
+            mMap.animateCamera(cameraUpdate);
+        }
     }
 }

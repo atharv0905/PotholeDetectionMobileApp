@@ -13,6 +13,12 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+
+
 public class UserMapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -55,9 +61,8 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
                 // Handle button click to get current location (if permissions are already granted)
                 if (locationHelper.checkLocationPermission()) {
                     if (locationHelper.isLocationEnabled()) {
-                        // Get user's current location and add marker
-                        // Move camera to the current location
-                        // Implement this part
+                        LatLng currentLatLng = new LatLng(19.076090, 72.877426);
+                        locationHelper.addMarkerAndMoveCamera(mMap, currentLatLng, 15.0f);
                     } else {
                         locationHelper.showEnableLocationDialog();
                     }
@@ -72,6 +77,9 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        LatLng currentLatLng = new LatLng(19.076090, 72.877426);
+        locationHelper.addMarkerAndMoveCamera(mMap, currentLatLng, 12.0f);
     }
 
     // Handle permission request result
