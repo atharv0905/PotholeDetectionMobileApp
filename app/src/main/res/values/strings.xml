@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Pothole Detection</string>
+    <string name="google_map_api_key">AIzaSyADAtPLIQGT-jFe81VVgJIyb0UBi4nR7so</string>
 </resources>

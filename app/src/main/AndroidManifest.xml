@@ -20,10 +20,10 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyADAtPLIQGT-jFe81VVgJIyb0UBi4nR7so" />
+            android:value="@string/google_map_api_key" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".UserMapActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
