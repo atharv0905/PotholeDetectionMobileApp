@@ -17,7 +17,6 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
@@ -34,8 +33,9 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
 
     private ImageButton current_location_button;
     double currentLatitude = 0, currentLongitude = 0;
+    LatLng destinationLocation;
     private Marker currentLocationMarker;
-    private Marker selectedMarker;
+    private Marker destinationLocationMarker;
 
 
     // get current location of user
@@ -83,23 +83,21 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
             @Override
             public void onPlaceSelected(Place place) {
                 // Handle the selected place.
-//            Toast.makeText(MapsActivity.this, "Place: " + place.getName(), Toast.LENGTH_LONG).show();
 
                 LatLng selectedLatLng = place.getLatLng();
-                if(selectedLatLng == null){
-                    Toast.makeText(getApplicationContext(), "Lat Lng is null", Toast.LENGTH_LONG).show();
-                }
                 if (selectedLatLng != null) {
-                    if (selectedMarker == null) {
+                    if (destinationLocationMarker == null) {
                         // If no marker exists, create a new one
                         MarkerOptions newMarker = new MarkerOptions();
                         newMarker.position(selectedLatLng);
-                        selectedMarker = mMap.addMarker(newMarker);
+                        destinationLocationMarker = mMap.addMarker(newMarker);
                     } else {
                         // If marker exists, move it to the new location
-                        selectedMarker.setPosition(selectedLatLng);
+                        destinationLocationMarker.setPosition(selectedLatLng);
                     }
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLatLng, 15));
+                    destinationLocation = selectedLatLng;
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLatLng, 14));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(selectedLatLng, 14));
                 }
             }
 
@@ -108,6 +106,7 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
                 // Handle the error.
                 Toast.makeText(getApplicationContext(), "" + status, Toast.LENGTH_LONG).show();
             }
+
         });
     }
     @Override
@@ -168,6 +167,29 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
         LatLng specificLatLng = new LatLng(19.076090, 72.877426);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(specificLatLng));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(specificLatLng, 13.0f));
+
+        if (mMap != null) {
+            // Set up a OnMapClickListener to handle clicks on the map
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                @Override
+                public void onMapClick(LatLng latLng) {
+                    // When the map is clicked, add a marker at the clicked position
+                    if(destinationLocationMarker == null){
+                        MarkerOptions newDestinationMarker = new MarkerOptions();
+                        newDestinationMarker.position(latLng);
+
+                        destinationLocationMarker = mMap.addMarker(newDestinationMarker);
+                    }else {
+                        destinationLocationMarker.setPosition(latLng);
+                    }
+                    destinationLocation = latLng;
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                }
+            });
+        } else {
+            Log.e("MapActivity", "GoogleMap object is null");
+        }
     }
 
     // Handle permission request result
