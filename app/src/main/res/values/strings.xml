@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">Pothole Detection</string>
     <string name="google_map_api_key">AIzaSyADAtPLIQGT-jFe81VVgJIyb0UBi4nR7so</string>
+    <string name="email">EMAIL</string>
+    <string name="login">LOGIN</string>
+    <string name="welcome">WELCOME</string>
+    <string name="password">PASSWORD</string>
+    <string name="name">NAME</string>
+    <string name="don_t_have_an_account_sign_up">Don\'t Have An Account? Sign Up</string>
+    <string name="signup">SignUp</string>
+    <string name="re_password">RE-PASSWORD</string>
+    <string name="holetrack">HoleTrack</string>
+    <string name="detect_share_nprotect_preserve">Detect. Share. \nProtect. Preserve.</string>
+    <string name="connect_collaborate_conquer">Connect, Collaborate, Conquer.</string>
+    <string name="get_started">Get Started</string>
 </resources>
