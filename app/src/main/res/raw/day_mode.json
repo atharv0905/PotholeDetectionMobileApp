@@ -1,0 +1,54 @@
+[
+  {
+    "featureType": "all",
+    "stylers": [
+      { "visibility": "on" }
+    ]
+  },
+  {
+    "featureType": "landscape",
+    "stylers": [
+      { "color": "#f0f0f0" }
+    ]
+  },
+  {
+    "featureType": "water",
+    "stylers": [
+      { "color": "#add8e6" }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      { "saturation": 50 },
+      { "lightness": 10 }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      { "visibility": "simplified" },
+      { "color": "#ffae4d" }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "stylers": [
+      { "visibility": "off" }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "stylers": [
+      { "visibility": "off" }
+    ]
+  },
+  {
+    "featureType": "administrative",
+    "stylers": [
+      { "visibility": "off" }
+    ]
+  }
+]
