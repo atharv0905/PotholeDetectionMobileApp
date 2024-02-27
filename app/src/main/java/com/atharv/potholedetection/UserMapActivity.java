@@ -2,6 +2,7 @@ package com.atharv.potholedetection;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -25,7 +26,25 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
     private LocationHelper locationHelper;
 
     ImageButton current_location_button;
+    double currentLatitude = 0, currentLongitude = 0;
 
+    private void getCurrentLocation(){
+        // Implement the OnLocationListener interface
+        LocationHelper.OnLocationListener locationListener = new LocationHelper.OnLocationListener() {
+            @Override
+            public void onLocationReceived(double latitude, double longitude) {
+                // Handle the received latitude and longitude
+                currentLatitude = latitude;
+                currentLongitude = longitude;
+                LatLng currentLatLng = new LatLng(currentLatitude, currentLongitude);
+                mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Marker Title"));
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 20.0f));
+            }
+        };
+
+        // Call the getCurrentLocation method of LocationHelper2 and pass the locationListener
+        locationHelper.getCurrentLocation(locationListener);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +72,7 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap);
         mapFragment.getMapAsync(this);
 
+
         // finding current location button
         current_location_button = findViewById(R.id.currentLocationBtn);
         current_location_button.setOnClickListener(new View.OnClickListener() {
@@ -61,7 +81,7 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
                 // Handle button click to get current location (if permissions are already granted)
                 if (locationHelper.checkLocationPermission()) {
                     if (locationHelper.isLocationEnabled()) {
-                        locationHelper.getCurrentLocation(mMap);
+                        getCurrentLocation();
                     } else {
                         locationHelper.showEnableLocationDialog();
                     }
