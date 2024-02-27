@@ -13,6 +13,14 @@
         android:layout_height="match_parent"
         tools:context=".UserMapActivity" />
 
+    <fragment
+        android:id="@+id/placeSearchBar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="20dp" />
+
     <ImageButton
         android:id="@+id/currentLocationBtn"
         android:layout_width="40dp"

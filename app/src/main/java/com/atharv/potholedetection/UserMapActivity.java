@@ -15,9 +15,16 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+
+import java.util.Arrays;
 
 
 public class UserMapActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -25,9 +32,13 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
     private GoogleMap mMap;
     private LocationHelper locationHelper;
 
-    ImageButton current_location_button;
+    private ImageButton current_location_button;
     double currentLatitude = 0, currentLongitude = 0;
+    private Marker currentLocationMarker;
+    private Marker selectedMarker;
 
+
+    // get current location of user
     private void getCurrentLocation(){
         // Implement the OnLocationListener interface
         LocationHelper.OnLocationListener locationListener = new LocationHelper.OnLocationListener() {
@@ -37,13 +48,67 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
                 currentLatitude = latitude;
                 currentLongitude = longitude;
                 LatLng currentLatLng = new LatLng(currentLatitude, currentLongitude);
-                mMap.addMarker(new MarkerOptions().position(currentLatLng).title("Marker Title"));
+                if(currentLocationMarker == null){
+                    MarkerOptions newCurrentLocationMarker = new MarkerOptions();
+                    newCurrentLocationMarker.position(currentLatLng);
+
+                    currentLocationMarker = mMap.addMarker(newCurrentLocationMarker);
+                }else{
+                    currentLocationMarker.setPosition(currentLatLng);
+                }
+
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 20.0f));
             }
         };
 
         // Call the getCurrentLocation method of LocationHelper2 and pass the locationListener
         locationHelper.getCurrentLocation(locationListener);
+    }
+
+    // implements place search bar
+    private void searchLocation(){
+        // Initialize Places.
+        Places.initialize(getApplicationContext(), "AIzaSyADAtPLIQGT-jFe81VVgJIyb0UBi4nR7so");
+
+        // Initialize the AutocompleteSupportFragment.
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.placeSearchBar);
+
+        // Specify the types of place data to return.
+        autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG));
+
+        // Set up a PlaceSelectionListener to handle the response.
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // Handle the selected place.
+//            Toast.makeText(MapsActivity.this, "Place: " + place.getName(), Toast.LENGTH_LONG).show();
+
+                LatLng selectedLatLng = place.getLatLng();
+                if(selectedLatLng == null){
+                    Toast.makeText(getApplicationContext(), "Lat Lng is null", Toast.LENGTH_LONG).show();
+                }
+                if (selectedLatLng != null) {
+                    if (selectedMarker == null) {
+                        // If no marker exists, create a new one
+                        MarkerOptions newMarker = new MarkerOptions();
+                        newMarker.position(selectedLatLng);
+                        selectedMarker = mMap.addMarker(newMarker);
+                    } else {
+                        // If marker exists, move it to the new location
+                        selectedMarker.setPosition(selectedLatLng);
+                    }
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(selectedLatLng, 15));
+                }
+            }
+
+            @Override
+            public void onError(com.google.android.gms.common.api.Status status) {
+                // Handle the error.
+                Toast.makeText(getApplicationContext(), "" + status, Toast.LENGTH_LONG).show();
+            }
+        });
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +137,8 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.gmap);
         mapFragment.getMapAsync(this);
 
+        // enabling search bar
+        searchLocation();
 
         // finding current location button
         current_location_button = findViewById(R.id.currentLocationBtn);
@@ -99,9 +166,8 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
 
         // Add a marker and move the camera to a specific location
         LatLng specificLatLng = new LatLng(19.076090, 72.877426);
-        mMap.addMarker(new MarkerOptions().position(specificLatLng).title("Marker Title"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(specificLatLng));
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(specificLatLng, 13.0f));
-
     }
 
     // Handle permission request result
