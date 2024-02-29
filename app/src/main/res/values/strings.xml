@@ -13,4 +13,9 @@
     <string name="detect_share_nprotect_preserve">Detect. Share. \nProtect. Preserve.</string>
     <string name="connect_collaborate_conquer">Connect, Collaborate, Conquer.</string>
     <string name="get_started">Get Started</string>
+    <string name="re_enter">Re-Enter</string>
+    <string name="sign_in">Sign In</string>
+    <string name="confirm_password">CONFIRM PASSWORD</string>
+    <string name="username">USERNAME</string>
+
 </resources>
