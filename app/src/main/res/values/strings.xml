@@ -17,5 +17,6 @@
     <string name="sign_in">Sign In</string>
     <string name="confirm_password">CONFIRM PASSWORD</string>
     <string name="username">USERNAME</string>
-
+    <string name="crack_on_the_road_surface">Crack on the road surface</string>
+    <string name="icon_representing_hole_track">Icon representing hole track</string>
 </resources>

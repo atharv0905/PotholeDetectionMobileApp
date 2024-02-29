@@ -1,63 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/applicationbackground"
-    android:orientation="vertical"
+    android:background= "@color/white"
     tools:context=".WelcomeActivity">
 
     <ImageView
-        android:id="@+id/myTextView"
+        android:id="@+id/hole_track"
         android:layout_width="115dp"
         android:layout_height="36dp"
-        android:layout_marginTop="13dp"
+        android:layout_marginTop="15dp"
         android:layout_marginStart="16dp"
-        android:background="@drawable/holetrack"
-        android:textSize="21sp" />
+        android:background="@drawable/hole_track"
+        android:textSize="21sp"
+        android:contentDescription="@string/icon_representing_hole_track"/>
+
 
     <ImageView
-        android:id="@+id/myImageView"
-        android:layout_width="420dp"
+        android:id="@+id/crack_pothole"
+        android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="50dp"
-        android:src="@drawable/img_2" />
+        android:layout_marginTop="85dp"
+        android:src="@drawable/crack_pothole"
+        android:contentDescription="@string/crack_on_the_road_surface"/>
+
 
     <TextView
-        android:id="@+id/myTextView2"
-        android:layout_width="344dp"
-        android:layout_height="83dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginStart="38dp"
+        android:id="@+id/detect_preserve"
+        android:layout_width="300dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="370dp"
+        android:layout_marginStart="40dp"
         android:background="@drawable/dspp"
         android:textSize="36sp"
-        android:gravity="center" />
+        android:layout_below="@id/hole_track"
+        android:layout_alignParentStart="true"
+        android:gravity="center"/>
 
     <TextView
-        android:id="@+id/myTextView3"
+        android:id="@+id/connect_conquer"
         android:layout_width="234dp"
-        android:layout_height="12dp"
-        android:layout_marginTop="15dp"
+        android:layout_height="14dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/ccc"
-        android:layout_gravity="center"
-        android:gravity="center" />
-
-
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/detect_preserve"
+        android:gravity="center"/>
 
     <Button
-        android:layout_width="367dp"
-        android:layout_height="72dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="25dp"
-        android:gravity="center_horizontal"
+        android:id="@+id/get_started_button"
+        android:layout_width="350dp"
+        android:layout_height="65dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="600dp"
         android:background="@drawable/button_background"
-        android:text="@string/get_started"
-        android:textSize="32sp"/>
+        android:textSize="32sp"
+        android:text="@string/get_started"/>
 
 
-
-</LinearLayout>
-
-
+</RelativeLayout>
