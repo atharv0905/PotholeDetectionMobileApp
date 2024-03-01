@@ -122,7 +122,7 @@
             android:layout_marginTop="160dp"
             android:gravity="center"
             android:hint="@string/re_enter"
-            android:inputType="text"/>
+            android:inputType="textPassword"/>
 
         <ImageView
             android:layout_width="25dp"

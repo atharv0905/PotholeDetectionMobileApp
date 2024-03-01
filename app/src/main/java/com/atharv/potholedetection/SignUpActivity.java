@@ -1,5 +1,6 @@
 package com.atharv.potholedetection;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -21,9 +22,8 @@ import java.net.URL;
 public class SignUpActivity extends AppCompatActivity {
 
     private EditText usernameEditText;
-//    private EditText emailEditText;
     private EditText passwordEditText;
-//    private EditText confirmPasswordEditText;
+    private EditText confirmPasswordEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         usernameEditText = findViewById(R.id.username);
         passwordEditText = findViewById(R.id.password2);
-//        confirmPasswordEditText = findViewById(R.id.name);
+        confirmPasswordEditText = findViewById(R.id.name);
         ImageButton loginButton = findViewById(R.id.sign_in);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,30 +48,29 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void signUp() throws JSONException {
         String username = usernameEditText.getText().toString();
-//        String email = emailEditText.getText().toString();
         String password = passwordEditText.getText().toString();
-//        String confirmPassword = confirmPasswordEditText.getText().toString();
+        String confirmPassword = confirmPasswordEditText.getText().toString();
 
         // Perform signup validation
-        if (isValidSignUp(username, password)) {
+        if (isValidSignUp(username, password, confirmPassword)) {
             // Signup successful, redirect to home page
             JSONObject data = new JSONObject();
             data.put("username", username);
             data.put("password", password);
             new ApiCaller().execute(data.toString());
-//            Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
-//            startActivity(intent);
-//            finish(); // Close the SignUpActivity
+            Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish(); // Close the SignUpActivity
         } else {
             // Validation failed, show error message
             showToast("Invalid signup details. Please try again.");
         }
     }
 
-    private boolean isValidSignUp(String username, String password) {
+    private boolean isValidSignUp(String username, String password, String confirmPassword) {
         // Add your signup validation logic here
         // For simplicity, we're just checking if all fields are non-empty
-        return !username.isEmpty() && !password.isEmpty();
+        return !username.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty();
     }
 
     private void showToast(String message) {
@@ -81,7 +80,7 @@ public class SignUpActivity extends AppCompatActivity {
     private class ApiCaller extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String apiUrl = "http://172.16.30.15:3000/users";
+            String apiUrl = "http://192.168.0.118:3000/users";
             String postData = params[0];
             try {
                 URL url = new URL(apiUrl);
