@@ -17,10 +17,13 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        EditText editTextUsername = (EditText) findViewById(R.id.username_edittext);
-        EditText editTextPassword = (EditText) findViewById(R.id.password1);
-        ImageButton loginButton = (ImageButton) findViewById(R.id.login1);
-        TextView signUpButton = (TextView) findViewById(R.id.signUpButton);
+        EditText editTextUsername = findViewById(R.id.username_edittext);
+        EditText editTextPassword = findViewById(R.id.password_login);
+        ImageButton loginButton = findViewById(R.id.login1);
+        TextView signUpButton = findViewById(R.id.signUpButton);
+        TextView usernameError = findViewById(R.id.username_error1);
+        TextView passwordError = findViewById(R.id.password_error_login);
+        TextView sameCredentialsError = findViewById(R.id.same_credentials_error);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -28,13 +31,38 @@ public class LoginActivity extends AppCompatActivity {
                 String email = editTextUsername.getText().toString();
                 String password = editTextPassword.getText().toString();
 
-                // Perform login validation (Replace this with your own logic)
-                if (isValidLogin(email, password)) {
-                    showToast("Login successful!");
-                    Intent intent = new Intent(LoginActivity.this, UserMapActivity.class);
-                    startActivity(intent);
+                if (email.isEmpty()) {
+                    usernameError.setVisibility(View.VISIBLE);
                 } else {
-                    showToast("Invalid credentials. Please try again.");
+                    usernameError.setVisibility(View.GONE);
+                }
+
+                if (password.isEmpty()) {
+                    passwordError.setVisibility(View.VISIBLE);
+                } else {
+                    passwordError.setVisibility(View.GONE);
+                }
+
+                // Check if username and password are the same
+                if (!email.isEmpty() && !password.isEmpty()) {
+                    if (email.equals(password)) {
+                        sameCredentialsError.setVisibility(View.VISIBLE);
+                        return;
+                    } else {
+                        sameCredentialsError.setVisibility(View.GONE);
+                    }
+                }
+
+                // If both username and password are not empty, proceed with login
+                if (!email.isEmpty() && !password.isEmpty()) {
+                    // Perform login validation (Replace this with your own logic)
+                    if (isValidLogin(email, password)) {
+                        showToast("Login successful!");
+                        Intent intent = new Intent(LoginActivity.this,UserMapActivity.class);
+                        startActivity(intent);
+                    } else {
+                        showToast("Invalid credentials. Please try again.");
+                    }
                 }
             }
         });
@@ -58,6 +86,4 @@ public class LoginActivity extends AppCompatActivity {
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
-
-
 }

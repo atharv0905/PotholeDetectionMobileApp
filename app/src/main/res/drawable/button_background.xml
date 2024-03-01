@@ -3,7 +3,7 @@
     android:shape="rectangle"
     tools:ignore="ExtraText">
     <corners android:radius="20dp" /> <!-- Adjust the radius to control the curvature -->
-    <solid android:color="#E53935" />
+    <solid android:color="#B5BBC5" />
     <stroke
         android:width="3dp"
         android:color="#000000" />

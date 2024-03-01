@@ -21,4 +21,10 @@
     <string name="icon_representing_hole_track">Icon representing hole track</string>
     <string name="login_description">Login</string>
     <string name="signin">signin</string>
+    <string name="please_fill_in_your_confirm_password">Please fill in your confirm password</string>
+    <string name="please_fill_in_your_password">Please fill in your password</string>
+    <string name="please_fill_in_your_username">Please fill in your username</string>
+    <string name="username_and_password_cannot_be_the_same">Username and password cannot be the same.</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="don_t_have_an_account">Don\'t have an account?</string>
 </resources>
