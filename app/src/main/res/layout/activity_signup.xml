@@ -111,7 +111,7 @@
             android:layout_marginTop="315dp"
             android:layout_marginStart="50dp"
             android:textColor="#FF0000"
-           android:visibility="gone"
+            android:visibility="gone"
             android:text="@string/please_fill_in_your_password" />
 
         <ImageView

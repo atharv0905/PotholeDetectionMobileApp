@@ -1,9 +1,12 @@
 package com.atharv.potholedetection;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -24,15 +27,25 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Arrays;
 
 
 public class UserMapActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    private SharedPreferences userSharedPreferences;
+    SharedPreferences sharedPreferences;
+    private String TOKEN = "Token";
+    private String USER_AUTHENTICATION_PREF_NAME = "USER_AUTHENTICATION";
+    private String USER = "USER";
+    private String USER_PREF_NAME = "USERNAME";
     private GoogleMap mMap;
     private LocationHelper locationHelper;
 
     private ImageButton current_location_button;
+    private Button logout;
     double currentLatitude = 0, currentLongitude = 0;
     LatLng destinationLocation;
     private Marker currentLocationMarker;
@@ -157,13 +170,30 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
                 }
             }
         });
+
+        logout = (Button) findViewById(R.id.logoutBtn);
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sharedPreferences = getSharedPreferences(USER_AUTHENTICATION_PREF_NAME, MODE_PRIVATE);
+                userSharedPreferences = getSharedPreferences(USER_PREF_NAME, MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.apply();
+                SharedPreferences.Editor user = userSharedPreferences.edit();
+                user.clear();
+                user.apply();
+                Intent intent = new Intent(UserMapActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     // All map related functionalities will be done here
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.night_mode));
+//        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.night_mode));
         // Add a marker and move the camera to a specific location
         LatLng specificLatLng = new LatLng(19.076090, 72.877426);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(specificLatLng));
