@@ -35,12 +35,21 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = editTextUsername.getText().toString();
+                String username = editTextUsername.getText().toString();
                 String password = editTextPassword.getText().toString();
 
                 // Perform login validation (Replace this with your own logic)
-                if (isValidLogin(email, password)) {
-                    showToast("Login successful!");
+                if (isValidLogin(username, password)) {
+                    // Navigate to the sign-up activity
+                    JSONObject data = new JSONObject();
+                    try {
+                        data.put("username", username);
+                        data.put("password", password);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    new ApiCaller().execute(data.toString());
+//                    showToast("Login successful!");
                     Intent intent = new Intent(LoginActivity.this, UserMapActivity.class);
                     startActivity(intent);
                 } else {
@@ -52,17 +61,6 @@ public class LoginActivity extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = editTextUsername.getText().toString();
-                String password = editTextPassword.getText().toString();
-                // Navigate to the sign-up activity
-                JSONObject data = new JSONObject();
-                try {
-                    data.put("username", username);
-                    data.put("password", password);
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-                new ApiCaller().execute(data.toString());
 
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivity(intent);
