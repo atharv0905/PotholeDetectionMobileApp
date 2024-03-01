@@ -1,6 +1,7 @@
 package com.atharv.potholedetection;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -22,11 +23,15 @@ import java.net.URL;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private SharedPreferences sharedPreferences;
+    private String TOKEN = "Token";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         EditText editTextUsername = (EditText) findViewById(R.id.username_edittext);
         EditText editTextPassword = (EditText) findViewById(R.id.password1);
         ImageButton loginButton = (ImageButton) findViewById(R.id.login1);
@@ -49,9 +54,6 @@ public class LoginActivity extends AppCompatActivity {
                         throw new RuntimeException(e);
                     }
                     new ApiCaller().execute(data.toString());
-//                    showToast("Login successful!");
-                    Intent intent = new Intent(LoginActivity.this, UserMapActivity.class);
-                    startActivity(intent);
                 } else {
                     showToast("Invalid credentials. Please try again.");
                 }
@@ -119,6 +121,11 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(TOKEN, result);
+            editor.apply();
+            Intent intent = new Intent(LoginActivity.this, UserMapActivity.class);
+            startActivity(intent);
         }
     }
 }
