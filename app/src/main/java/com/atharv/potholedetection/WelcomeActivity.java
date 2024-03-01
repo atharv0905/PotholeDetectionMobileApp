@@ -40,7 +40,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
         String token = sharedPreferences.getString("Token", "");
         if (token != "") {
-//            Toast.makeText(getApplicationContext(), "Token retrieved successfully: " + token, Toast.LENGTH_LONG).show();
             JSONObject data = new JSONObject();
             try {
                 data.put("token", token);

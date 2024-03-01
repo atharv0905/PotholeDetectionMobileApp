@@ -34,4 +34,14 @@
         android:background="@drawable/circle_background_current_location_btn_icon"
         android:src="@drawable/google_map_current_location_btn_icon"/>
 
+    <Button
+        android:id="@+id/logoutBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logout"
+        android:textSize="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="20dp" />
+
 </RelativeLayout>
