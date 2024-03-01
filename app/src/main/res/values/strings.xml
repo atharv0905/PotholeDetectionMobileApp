@@ -19,4 +19,5 @@
     <string name="username">USERNAME</string>
     <string name="crack_on_the_road_surface">Crack on the road surface</string>
     <string name="icon_representing_hole_track">Icon representing hole track</string>
+    <string name="login_description">Login</string>
 </resources>

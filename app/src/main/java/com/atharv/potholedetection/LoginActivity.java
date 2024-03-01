@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
                 // Perform login validation (Replace this with your own logic)
                 if (isValidLogin(email, password)) {
                     showToast("Login successful!");
-                    Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                    Intent intent = new Intent(LoginActivity.this, UserMapActivity.class);
                     startActivity(intent);
                 } else {
                     showToast("Invalid credentials. Please try again.");

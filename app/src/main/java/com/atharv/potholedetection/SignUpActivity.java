@@ -43,7 +43,7 @@ public class SignUpActivity extends AppCompatActivity {
         // Perform signup validation
         if (isValidSignUp(username, email, password, confirmPassword)) {
             // Signup successful, redirect to home page
-            Intent intent = new Intent(SignUpActivity.this, HomeActivity.class);
+            Intent intent = new Intent(SignUpActivity.this, UserMapActivity.class);
             startActivity(intent);
             finish(); // Close the SignUpActivity
         } else {

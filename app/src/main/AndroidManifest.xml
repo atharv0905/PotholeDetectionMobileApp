@@ -23,7 +23,7 @@
             android:value="@string/google_map_api_key" />
 
         <activity
-            android:name=".UserMapActivity"
+            android:name=".WelcomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,7 +32,7 @@
         </activity>
 
 
-        <activity android:name=".WelcomeActivity">
+        <activity android:name=".UserMapActivity">
 
         </activity>
 
