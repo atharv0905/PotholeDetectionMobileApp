@@ -67,7 +67,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private class ApiCaller extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String apiUrl = "http://192.168.0.118:3000/protected";
+            String apiUrl = "http://192.168.0.118:3000/user/protected";
             String postData = params[0];
             try {
                 URL url = new URL(apiUrl);

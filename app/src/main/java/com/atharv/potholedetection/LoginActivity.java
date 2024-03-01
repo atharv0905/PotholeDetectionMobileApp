@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
     private class ApiCaller extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String apiUrl = "http://192.168.0.118:3000/login";
+            String apiUrl = "http://192.168.0.118:3000/user/login";
             String postData = params[0];
             try {
                 URL url = new URL(apiUrl);
