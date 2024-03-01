@@ -24,14 +24,22 @@ import java.net.URL;
 public class LoginActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPreferences;
+    private SharedPreferences userSharedPreferences;
     private String TOKEN = "Token";
+    private String USER_AUTHENTICATION_PREF_NAME = "USER_AUTHENTICATION";
+
+    private String USER = "USER";
+    private String USER_PREF_NAME = "USERNAME";
+    String username = "";
+    String password = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(USER_AUTHENTICATION_PREF_NAME, MODE_PRIVATE);
+        userSharedPreferences = getSharedPreferences(USER_PREF_NAME, MODE_PRIVATE);
         EditText editTextUsername = (EditText) findViewById(R.id.username_edittext);
         EditText editTextPassword = (EditText) findViewById(R.id.password1);
         ImageButton loginButton = (ImageButton) findViewById(R.id.login1);
@@ -40,8 +48,8 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = editTextUsername.getText().toString();
-                String password = editTextPassword.getText().toString();
+                username = editTextUsername.getText().toString();
+                password = editTextPassword.getText().toString();
 
                 // Perform login validation (Replace this with your own logic)
                 if (isValidLogin(username, password)) {
@@ -55,7 +63,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     new ApiCaller().execute(data.toString());
                 } else {
-                    showToast("Invalid credentials. Please try again.");
+//                    showToast("Invalid credentials. Please try again.");
                 }
             }
         });
@@ -120,12 +128,25 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+
+            // saving token
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString(TOKEN, result);
             editor.apply();
-            Intent intent = new Intent(LoginActivity.this, UserMapActivity.class);
-            startActivity(intent);
+
+            // saving username
+            SharedPreferences.Editor userEditor = userSharedPreferences.edit();
+            userEditor.putString(USER, username);
+            userEditor.apply();
+
+            if(result.contains("Error")){
+//                Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+            }else{
+                Intent intent = new Intent(LoginActivity.this, UserMapActivity.class);
+                startActivity(intent);
+            }
+
         }
     }
 }

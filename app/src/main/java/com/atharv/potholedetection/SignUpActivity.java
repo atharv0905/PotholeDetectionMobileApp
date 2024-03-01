@@ -63,7 +63,7 @@ public class SignUpActivity extends AppCompatActivity {
             finish(); // Close the SignUpActivity
         } else {
             // Validation failed, show error message
-            showToast("Invalid signup details. Please try again.");
+//            showToast("Invalid signup details. Please try again.");
         }
     }
 
@@ -117,7 +117,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
         }
     }
 }
