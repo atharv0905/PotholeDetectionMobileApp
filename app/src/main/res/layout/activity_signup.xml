@@ -18,7 +18,7 @@
 
     <TextView
         android:layout_width="170dp"
-        android:layout_height="40dp"
+        android:layout_height="35dp"
         android:gravity="center"
         android:layout_centerHorizontal="true"
         android:text="@string/signup"
@@ -67,48 +67,13 @@
         android:layout_height="20dp"
         android:layout_marginTop="260dp"
         android:layout_marginStart="40dp"
-        android:text="@string/email"
-        android:textSize="15sp"/>
-
-    <FrameLayout
-        android:id="@+id/signupFrameLayout3"
-        android:layout_width="match_parent"
-        android:layout_height="280dp"
-        android:layout_marginTop="80dp"
-        android:layout_gravity="center">
-
-        <EditText
-            android:id="@+id/email"
-            android:layout_width="330dp"
-            android:layout_height="50dp"
-            android:background="@drawable/rectangle9"
-            android:layout_marginTop="105dp"
-            android:gravity="center"
-            android:layout_gravity="center"
-            android:hint="@string/email"
-            android:inputType="textEmailAddress"/>
-
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="17dp"
-            android:layout_marginTop="240dp"
-            android:layout_marginStart="50dp"
-            android:background="@drawable/email"/>
-
-    </FrameLayout>
-
-    <TextView
-        android:layout_width="100dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="370dp"
-        android:layout_marginStart="40dp"
         android:text="@string/password"
         android:textSize="15sp"/>
 
     <FrameLayout
         android:id="@+id/signupFrameLayout2"
         android:layout_width="match_parent"
-        android:layout_height="410dp"
+        android:layout_height="340dp"
         android:layout_marginTop="60dp"
         android:layout_gravity="center">
 
@@ -118,7 +83,7 @@
             android:layout_height="50dp"
             android:background="@drawable/rectangle9"
             android:layout_gravity="center"
-            android:layout_marginTop="170dp"
+            android:layout_marginTop="100dp"
             android:gravity="center"
             android:hint="@string/password"
             android:inputType="textPassword"/>
@@ -126,7 +91,7 @@
         <ImageView
             android:layout_width="25dp"
             android:layout_height="17dp"
-            android:layout_marginTop="365dp"
+            android:layout_marginTop="260dp"
             android:layout_marginStart="50dp"
             android:background="@drawable/image5"/>
 
@@ -136,7 +101,7 @@
     <TextView
         android:layout_width="150dp"
         android:layout_height="20dp"
-        android:layout_marginTop="480dp"
+        android:layout_marginTop="380dp"
         android:layout_marginStart="40dp"
         android:text="@string/confirm_password"
         android:textSize="15sp"/>
@@ -144,7 +109,7 @@
     <FrameLayout
         android:id="@+id/signupFrameLayout4"
         android:layout_width="match_parent"
-        android:layout_height="530dp"
+        android:layout_height="450dp"
         android:layout_marginTop="60dp"
         android:layout_gravity="center">
 
@@ -154,7 +119,7 @@
             android:layout_height="50dp"
             android:background="@drawable/rectangle9"
             android:layout_gravity="center"
-            android:layout_marginTop="220dp"
+            android:layout_marginTop="160dp"
             android:gravity="center"
             android:hint="@string/re_enter"
             android:inputType="text"/>
@@ -162,7 +127,7 @@
         <ImageView
             android:layout_width="25dp"
             android:layout_height="17dp"
-            android:layout_marginTop="480dp"
+            android:layout_marginTop="375dp"
             android:layout_marginStart="50dp"
             android:background="@drawable/image5"
             />
@@ -174,10 +139,10 @@
         android:layout_width="213dp"
         android:layout_height="65dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="630dp"
+        android:layout_marginTop="620dp"
         android:background="@drawable/signupbutton"
         android:gravity="center"
-        android:contentDescription="@string/sign_in"
+        android:contentDescription="@string/signin"
         android:textSize="25sp" />
 
 </RelativeLayout>
