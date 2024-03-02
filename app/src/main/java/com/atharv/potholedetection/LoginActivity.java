@@ -1,6 +1,8 @@
 package com.atharv.potholedetection;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -10,59 +12,58 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class LoginActivity extends AppCompatActivity {
+
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences userSharedPreferences;
+    private String TOKEN = "Token";
+    private String USER_AUTHENTICATION_PREF_NAME = "USER_AUTHENTICATION";
+
+    private String USER = "USER";
+    private String USER_PREF_NAME = "USERNAME";
+    String username = "";
+    String password = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        EditText editTextUsername = findViewById(R.id.username_edittext);
-        EditText editTextPassword = findViewById(R.id.password_login);
-        ImageButton loginButton = findViewById(R.id.login1);
-        TextView signUpButton = findViewById(R.id.signUpButton);
-        TextView usernameError = findViewById(R.id.username_error1);
-        TextView passwordError = findViewById(R.id.password_error_login);
-        TextView sameCredentialsError = findViewById(R.id.same_credentials_error);
+        sharedPreferences = getSharedPreferences(USER_AUTHENTICATION_PREF_NAME, MODE_PRIVATE);
+        userSharedPreferences = getSharedPreferences(USER_PREF_NAME, MODE_PRIVATE);
+        EditText editTextUsername = (EditText) findViewById(R.id.username_edittext);
+        EditText editTextPassword = (EditText) findViewById(R.id.password_login);
+        ImageButton loginButton = (ImageButton) findViewById(R.id.login1);
+        TextView signUpButton = (TextView) findViewById(R.id.signUpButton);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = editTextUsername.getText().toString();
-                String password = editTextPassword.getText().toString();
+                username = editTextUsername.getText().toString();
+                password = editTextPassword.getText().toString();
 
-                if (email.isEmpty()) {
-                    usernameError.setVisibility(View.VISIBLE);
-                } else {
-                    usernameError.setVisibility(View.GONE);
-                }
-
-                if (password.isEmpty()) {
-                    passwordError.setVisibility(View.VISIBLE);
-                } else {
-                    passwordError.setVisibility(View.GONE);
-                }
-
-                // Check if username and password are the same
-                if (!email.isEmpty() && !password.isEmpty()) {
-                    if (email.equals(password)) {
-                        sameCredentialsError.setVisibility(View.VISIBLE);
-                        return;
-                    } else {
-                        sameCredentialsError.setVisibility(View.GONE);
+                // Perform login validation (Replace this with your own logic)
+                if (isValidLogin(username, password)) {
+                    // Navigate to the sign-up activity
+                    JSONObject data = new JSONObject();
+                    try {
+                        data.put("username", username);
+                        data.put("password", password);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
                     }
-                }
-
-                // If both username and password are not empty, proceed with login
-                if (!email.isEmpty() && !password.isEmpty()) {
-                    // Perform login validation (Replace this with your own logic)
-                    if (isValidLogin(email, password)) {
-                        showToast("Login successful!");
-                        Intent intent = new Intent(LoginActivity.this,UserMapActivity.class);
-                        startActivity(intent);
-                    } else {
-                        showToast("Invalid credentials. Please try again.");
-                    }
+                    new ApiCaller().execute(data.toString());
+                } else {
+                    showToast("Invalid credentials. Please try again.");
                 }
             }
         });
@@ -70,7 +71,7 @@ public class LoginActivity extends AppCompatActivity {
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Navigate to the sign-up activity
+
                 Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
                 startActivity(intent);
             }
@@ -85,5 +86,67 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    private class ApiCaller extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... params) {
+            String apiUrl = "http://192.168.43.166:3000/user/login";
+            String postData = params[0];
+            try {
+                URL url = new URL(apiUrl);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setDoOutput(true);
+
+                OutputStream outputStream = connection.getOutputStream();
+                outputStream.write(postData.getBytes());
+                outputStream.flush();
+                outputStream.close();
+
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String inputLine;
+                    StringBuilder response = new StringBuilder();
+
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    in.close();
+
+                    return response.toString();
+                } else {
+                    return "Error: " + responseCode;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return "Error: " + e.getMessage();
+            }
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+
+            // saving token
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(TOKEN, result);
+            editor.apply();
+
+            // saving username
+            SharedPreferences.Editor userEditor = userSharedPreferences.edit();
+            userEditor.putString(USER, username);
+            userEditor.apply();
+
+            if(result.contains("Error")){
+//                Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+            }else{
+                Intent intent = new Intent(LoginActivity.this, UserMapActivity.class);
+                startActivity(intent);
+            }
+
+        }
     }
 }

@@ -40,6 +40,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         String token = sharedPreferences.getString("Token", "");
         if (token != "") {
+//            Toast.makeText(getApplicationContext(), "Token retrieved successfully: " + token, Toast.LENGTH_LONG).show();
             JSONObject data = new JSONObject();
             try {
                 data.put("token", token);
@@ -66,7 +67,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private class ApiCaller extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String apiUrl = "http://192.168.0.118:3000/user/protected";
+            String apiUrl = "http://192.168.43.166:3000/user/protected";
             String postData = params[0];
             try {
                 URL url = new URL(apiUrl);
@@ -117,4 +118,3 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 }
-

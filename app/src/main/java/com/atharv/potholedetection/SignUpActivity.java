@@ -6,11 +6,16 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -19,9 +24,6 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText usernameEditText;
     private EditText passwordEditText;
     private EditText confirmPasswordEditText;
-    private TextView usernameErrorTextView;
-    private TextView passwordErrorTextView;
-    private TextView confirmPasswordErrorTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,126 +33,54 @@ public class SignUpActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.username);
         passwordEditText = findViewById(R.id.password2);
         confirmPasswordEditText = findViewById(R.id.re_enter);
-        usernameErrorTextView = findViewById(R.id.username_error);
-        passwordErrorTextView = findViewById(R.id.password_error);
-        confirmPasswordErrorTextView = findViewById(R.id.confirm_password_error);
-
-        // Add focus change listener to each EditText field
-        usernameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && isErrorMessageVisible()) resetSignUpPage();
-            }
-        });
-
-        passwordEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && isErrorMessageVisible()) resetSignUpPage();
-            }
-        });
-
-        confirmPasswordEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus && isErrorMessageVisible()) resetSignUpPage();
-            }
-        });
-
-        ImageButton signUpButton = findViewById(R.id.sign_in);
-        signUpButton.setOnClickListener(new View.OnClickListener() {
+        ImageButton loginButton = findViewById(R.id.sign_in);
+        loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signUp();
+                try {
+                    signUp();
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }
 
-    private void signUp() {
+    private void signUp() throws JSONException {
         String username = usernameEditText.getText().toString();
         String password = passwordEditText.getText().toString();
         String confirmPassword = confirmPasswordEditText.getText().toString();
 
-        // Reset error messages and the page
-        resetSignUpPage();
-
-        // Validate username
-        if (username.isEmpty()) {
-            showErrorMessage(usernameErrorTextView, "Please fill in your username");
-            return;
+        // Perform signup validation
+        if (isValidSignUp(username, password, confirmPassword)) {
+            // Signup successful, redirect to home page
+            JSONObject data = new JSONObject();
+            data.put("username", username);
+            data.put("password", password);
+            new ApiCaller().execute(data.toString());
+            Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish(); // Close the SignUpActivity
+        } else {
+            // Validation failed, show error message
+//          showToast("Invalid signup details. Please try again.");
         }
+    }
 
-        // Validate password
-        if (password.isEmpty()) {
-            showErrorMessage(passwordErrorTextView, "Please fill in your password");
-            return;
-        }
-
-        // Validate confirm password
-        if (confirmPassword.isEmpty()) {
-            showErrorMessage(confirmPasswordErrorTextView, "Please fill in your confirm password");
-            return;
-        }
-
-        // Check if username and password are the same
-        if (username.equals(password)) {
-            showErrorMessage(passwordErrorTextView, "Username and password cannot be the same");
-            return;
-        }
-
-        // Check if password matches confirm password
-        if (!password.equals(confirmPassword)) {
-            showErrorMessage(confirmPasswordErrorTextView, "Passwords do not match");
-            return;
-        }
-
-        // Perform signup if all fields are valid
-        showToast("Signup successful!"); // Replace this with your signup logic
-
-        // Redirect to the login page after sign up
-        Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-        startActivity(intent);
-
-        // Reset all fields and error messages
-        resetSignUpPage();
-
-        // Call your API for signup here
-        new ApiCaller().execute("your parameters"); // Replace "your parameters" with actual data to be passed to the API
+    private boolean isValidSignUp(String username, String password, String confirmPassword) {
+        // Add your signup validation logic here
+        // For simplicity, we're just checking if all fields are non-empty
+        return !username.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty();
     }
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    private void resetSignUpPage() {
-        // Clear all EditText fields
-        usernameEditText.setText("");
-        passwordEditText.setText("");
-        confirmPasswordEditText.setText("");
-
-        // Hide all error messages
-        usernameErrorTextView.setVisibility(View.GONE);
-        passwordErrorTextView.setVisibility(View.GONE);
-        confirmPasswordErrorTextView.setVisibility(View.GONE);
-    }
-
-    private void showErrorMessage(TextView errorTextView, String errorMessage) {
-        errorTextView.setVisibility(View.VISIBLE);
-        errorTextView.setText(errorMessage);
-    }
-
-    private boolean isErrorMessageVisible() {
-        // Check if any error message is visible
-        return usernameErrorTextView.getVisibility() == View.VISIBLE ||
-                passwordErrorTextView.getVisibility() == View.VISIBLE ||
-                confirmPasswordErrorTextView.getVisibility() == View.VISIBLE;
-    }
-
-
     private class ApiCaller extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String apiUrl = "http://example.com/signup"; // Your signup API endpoint
+            String apiUrl = "http://192.168.43.166:3000/user/create";
             String postData = params[0];
             try {
                 URL url = new URL(apiUrl);
@@ -159,24 +89,39 @@ public class SignUpActivity extends AppCompatActivity {
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setDoOutput(true);
 
-                // Write data to the server
-                connection.getOutputStream().write(postData.getBytes());
+                OutputStream outputStream = connection.getOutputStream();
+                outputStream.write(postData.getBytes());
+                outputStream.flush();
+                outputStream.close();
 
-                // Read response from the server
-                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                StringBuilder response = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String inputLine;
+                    StringBuilder response = new StringBuilder();
+
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+                    in.close();
+
+                    return response.toString();
+                } else {
+                    return "Error: " + responseCode;
                 }
-                reader.close();
-
-                // Return the response from the server
-                return response.toString();
             } catch (Exception e) {
                 e.printStackTrace();
+                return "Error: " + e.getMessage();
             }
-            return apiUrl;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Error: No response from server", Toast.LENGTH_LONG).show();
+            }
         }
     }
 }
