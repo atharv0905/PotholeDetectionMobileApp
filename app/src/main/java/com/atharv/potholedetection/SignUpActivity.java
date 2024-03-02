@@ -25,6 +25,8 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText passwordEditText;
     private EditText confirmPasswordEditText;
 
+    private String IP = "192.168.0.118";
+    private String PORT = "3000";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +82,7 @@ public class SignUpActivity extends AppCompatActivity {
     private class ApiCaller extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String apiUrl = "http://192.168.43.166:3000/user/create";
+            String apiUrl = "http://"+ IP + ":" + PORT + "/user/create";
             String postData = params[0];
             try {
                 URL url = new URL(apiUrl);
@@ -118,9 +120,9 @@ public class SignUpActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             if (result != null) {
-                Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(getApplicationContext(), "Error: No response from server", Toast.LENGTH_LONG).show();
+//                Toast.makeText(getApplicationContext(), "Error: No response from server", Toast.LENGTH_LONG).show();
             }
         }
     }

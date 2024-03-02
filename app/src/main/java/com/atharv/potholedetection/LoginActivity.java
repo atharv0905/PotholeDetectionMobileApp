@@ -33,6 +33,8 @@ public class LoginActivity extends AppCompatActivity {
     String username = "";
     String password = "";
 
+    private String IP = "192.168.0.118";
+    private String PORT = "3000";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +65,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     new ApiCaller().execute(data.toString());
                 } else {
-                    showToast("Invalid credentials. Please try again.");
+//                    showToast("Invalid credentials. Please try again.");
                 }
             }
         });
@@ -91,7 +93,7 @@ public class LoginActivity extends AppCompatActivity {
     private class ApiCaller extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String apiUrl = "http://192.168.43.166:3000/user/login";
+            String apiUrl = "http://"+ IP + ":" + PORT + "/user/login";
             String postData = params[0];
             try {
                 URL url = new URL(apiUrl);
@@ -128,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+//            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
 
             // saving token
             SharedPreferences.Editor editor = sharedPreferences.edit();

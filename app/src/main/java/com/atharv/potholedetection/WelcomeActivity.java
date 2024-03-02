@@ -28,12 +28,14 @@ public class WelcomeActivity extends AppCompatActivity {
     private String USER = "USER";
     private String USER_PREF_NAME = "USERNAME";
 
+    private String IP = "192.168.0.118";
+    private String PORT = "3000";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-
         Button get_started = findViewById(R.id.get_started_button);
         sharedPreferences = getSharedPreferences(USER_AUTHENTICATION_PREF_NAME, MODE_PRIVATE);
         userSharedPreferences = getSharedPreferences(USER_PREF_NAME, MODE_PRIVATE);
@@ -67,7 +69,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private class ApiCaller extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String apiUrl = "http://192.168.43.166:3000/user/protected";
+            String apiUrl = "http://"+ IP + ":" + PORT + "/user/protected";
             String postData = params[0];
             try {
                 URL url = new URL(apiUrl);
