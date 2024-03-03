@@ -5,7 +5,11 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.os.Handler;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,36 +41,30 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        Button get_started = findViewById(R.id.get_started_button);
         sharedPreferences = getSharedPreferences(USER_AUTHENTICATION_PREF_NAME, MODE_PRIVATE);
         userSharedPreferences = getSharedPreferences(USER_PREF_NAME, MODE_PRIVATE);
 
-        String token = sharedPreferences.getString("Token", "");
-        if (token != "") {
-//            Toast.makeText(getApplicationContext(), "Token retrieved successfully: " + token, Toast.LENGTH_LONG).show();
-            JSONObject data = new JSONObject();
-            try {
-                data.put("token", token);
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-            new ApiCaller().execute(data.toString());
-        } else {
-//            Toast.makeText(getApplicationContext(), "Token not found", Toast.LENGTH_LONG).show();
-        }
-
-
-        get_started.setOnClickListener(new View.OnClickListener() {
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View v) {
-//                Toast.makeText(getApplicationContext(), "Button Clicked", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
-                startActivity(intent);
+            public void run() {
+                String token = sharedPreferences.getString("Token", "");
+                if (token != "") {
+                    JSONObject data = new JSONObject();
+                    try {
+                        data.put("token", token);
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                    new ApiCaller().execute(data.toString());
+                } else {
+                    Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
             }
-        });
-
-
+        }, 2000);
     }
+
     private class ApiCaller extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
@@ -107,16 +105,17 @@ public class WelcomeActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-//            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
             SharedPreferences.Editor userEditor = userSharedPreferences.edit();
             userEditor.putString(USER, result);
             userEditor.apply();
             if(result != ""){
                 Intent intent = new Intent(WelcomeActivity.this, UserMapActivity.class);
                 startActivity(intent);
+                finish();
             }else {
-                Intent intent = new Intent(WelcomeActivity.this, SignUpActivity.class);
+                Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
             }
         }
     }
