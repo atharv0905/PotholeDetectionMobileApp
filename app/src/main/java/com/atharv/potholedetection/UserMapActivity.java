@@ -203,7 +203,7 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.night_mode));
+//        googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.night_mode));
         // Add a marker and move the camera to a specific location
         LatLng specificLatLng = new LatLng(19.076090, 72.877426);
         mMap.moveCamera(CameraUpdateFactory.newLatLng(specificLatLng));

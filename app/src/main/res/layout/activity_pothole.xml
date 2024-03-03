@@ -27,14 +27,26 @@
         android:paddingVertical="15dp"
         />
 
-    <TextView
-        android:id="@+id/result"
+    <FrameLayout
+        android:id="@+id/gmapContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/openCamera"
-        android:layout_marginTop="25dp"
-        android:textSize="23dp"
-        android:text="result"
-        android:textAlignment="center"
-        android:layout_marginHorizontal="15dp"/>
+        android:layout_height="300dp"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
+
+        <fragment
+            android:id="@+id/gmap"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/sendBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="100dp"
+            android:layout_marginTop="220dp"
+            android:text="Send"
+            android:textSize="25dp"/>
+    </FrameLayout>
 </RelativeLayout>   
