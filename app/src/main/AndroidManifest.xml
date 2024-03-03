@@ -43,6 +43,10 @@
             <activity android:name=".SignUpActivity">
 
             </activity>
+        
+            <activity android:name=".PotholeActivity">
+
+            </activity>
 
     </application>
 

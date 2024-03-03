@@ -46,6 +46,7 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
 
     private ImageButton current_location_button;
     private Button logout;
+    private Button addPotholeBtn;
     double currentLatitude = 0, currentLongitude = 0;
     LatLng destinationLocation;
     private Marker currentLocationMarker;
@@ -184,6 +185,15 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
                 user.clear();
                 user.apply();
                 Intent intent = new Intent(UserMapActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        addPotholeBtn = (Button) findViewById(R.id.addPothole);
+        addPotholeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UserMapActivity.this, PotholeActivity.class);
                 startActivity(intent);
             }
         });
