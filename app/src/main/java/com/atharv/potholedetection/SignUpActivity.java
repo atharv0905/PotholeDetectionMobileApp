@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +26,10 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText passwordEditText;
     private EditText confirmPasswordEditText;
 
+    private TextView usernameError;
+    private TextView passwordError;
+    private TextView confirmPasswordError;
+
     Config config = new Config();
     private String IP = config.IP;
     private String PORT = config.PORT;
@@ -36,6 +41,9 @@ public class SignUpActivity extends AppCompatActivity {
         usernameEditText = findViewById(R.id.username);
         passwordEditText = findViewById(R.id.password2);
         confirmPasswordEditText = findViewById(R.id.re_enter);
+        usernameError =(TextView) findViewById(R.id.username_error);
+        passwordError = (TextView) findViewById(R.id.password_error);
+        confirmPasswordError = (TextView) findViewById(R.id.confirm_password_error);
         ImageButton loginButton = findViewById(R.id.sign_in);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,9 +69,6 @@ public class SignUpActivity extends AppCompatActivity {
             data.put("username", username);
             data.put("password", password);
             new ApiCaller().execute(data.toString());
-            Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish(); // Close the SignUpActivity
         } else {
             // Validation failed, show error message
 //          showToast("Invalid signup details. Please try again.");
@@ -71,9 +76,37 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private boolean isValidSignUp(String username, String password, String confirmPassword) {
-        // Add your signup validation logic here
-        // For simplicity, we're just checking if all fields are non-empty
-        return !username.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty();
+        if(!username.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
+            if(username.equals(password)){
+                usernameError.setText("Username and password shouldn't be same");
+                passwordError.setText("Username and password shouldn't be same");
+                usernameError.setVisibility(View.VISIBLE);
+                passwordError.setVisibility(View.VISIBLE);
+                usernameEditText.setText("");
+                passwordEditText.setText("");
+                confirmPasswordEditText.setText("");
+                return false;
+            } else if (password.length() < 8) {
+                passwordError.setText("password should be more than 8 characters");
+                passwordError.setVisibility(View.VISIBLE);
+                usernameEditText.setText("");
+                passwordEditText.setText("");
+                confirmPasswordEditText.setText("");
+                return false;
+            } else if (!password.equals(confirmPassword)) {
+                passwordError.setText("password and confirm password doesn't match");
+                confirmPasswordError.setText("password and confirm password doesn't match");
+                confirmPasswordError.setVisibility(View.VISIBLE);
+                passwordError.setVisibility(View.VISIBLE);
+                usernameEditText.setText("");
+                passwordEditText.setText("");
+                confirmPasswordEditText.setText("");
+                return false;
+            }else {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void showToast(String message) {
@@ -120,10 +153,15 @@ public class SignUpActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            if (result != null) {
-//                Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+            if (result.contains("Error: 301")) {
+                usernameError.setText("username already taken");
+                usernameError.setVisibility(View.VISIBLE);
+                usernameEditText.setText("");
+                passwordEditText.setText("");
+                confirmPasswordEditText.setText("");
             } else {
-//                Toast.makeText(getApplicationContext(), "Error: No response from server", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                startActivity(intent);
             }
         }
     }
