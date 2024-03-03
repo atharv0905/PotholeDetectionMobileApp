@@ -7,14 +7,23 @@
     android:background="@drawable/background2"
     tools:context=".SignUpActivity">
 
-    <TextView
-        android:id="@+id/myTextView"
-        android:layout_width="115dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="13dp"
-        android:layout_marginStart="16dp"
-        android:background="@drawable/hole_track"
+    <ImageView
+        android:id="@+id/safepath_logo"
+        android:layout_width="55dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/logo_without_text"
         android:textSize="21sp" />
+
+    <ImageView
+        android:id="@+id/safepath_logo_text"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="60dp"
+        android:background="@drawable/logo_text_only"
+        android:textSize="21sp"/>
 
     <TextView
         android:layout_width="170dp"
@@ -170,15 +179,16 @@
 
     </FrameLayout>
 
-    <ImageButton
+    <Button
         android:id="@+id/sign_in"
         android:layout_width="213dp"
         android:layout_height="65dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="620dp"
-        android:background="@drawable/signupbutton"
         android:gravity="center"
+        android:background="@drawable/login_signup_background"
+        android:text="Sign Up"
         android:contentDescription="@string/signin"
-        android:textSize="25sp" />
+        android:textSize="25sp"/>
 
 </RelativeLayout>

@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -48,7 +49,7 @@ public class LoginActivity extends AppCompatActivity {
         userSharedPreferences = getSharedPreferences(USER_PREF_NAME, MODE_PRIVATE);
         editTextUsername = (EditText) findViewById(R.id.username_edittext);
         editTextPassword = (EditText) findViewById(R.id.password_login);
-        ImageButton loginButton = (ImageButton) findViewById(R.id.login1);
+        Button loginButton = (Button) findViewById(R.id.login1);
         TextView signUpButton = (TextView) findViewById(R.id.signUpButton);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
