@@ -55,6 +55,15 @@
             android:inputType="textPersonName"/>
 
         <TextView
+            android:id="@+id/errorMsg1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="190dp"
+            android:layout_marginLeft="55dp"
+            android:textColor="#FF0000"
+            android:visibility="gone"
+            android:text="Incorrect username or password" />
+        <TextView
             android:id="@+id/username_error1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -108,25 +117,15 @@
             android:gravity="center"/>
 
         <TextView
-            android:id="@+id/password_error_login"
+            android:id="@+id/errorMsg2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="75dp"
-            android:layout_marginStart="50dp"
+            android:layout_marginStart="55dp"
             android:textColor="#FF0000"
             android:visibility="gone"
-            android:text="@string/please_fill_in_your_password" />
+            android:text="Incorrect username or password" />
 
-        <TextView
-            android:id="@+id/same_credentials_error"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="50dp"
-            android:layout_marginTop="75dp"
-            android:text="@string/username_and_password_cannot_be_the_same"
-            android:textColor="#FF0000"
-            android:visibility="gone"
-            />
 
         <ImageView
             android:layout_width="25dp"

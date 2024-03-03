@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Pothole Detection</string>
+    <string name="IP">"192.168.0.118"</string>
+    <string name="PORT">3000</string>
     <string name="google_map_api_key">AIzaSyADAtPLIQGT-jFe81VVgJIyb0UBi4nR7so</string>
     <string name="email">EMAIL</string>
     <string name="login">LOGIN</string>

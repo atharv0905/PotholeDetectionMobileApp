@@ -25,8 +25,9 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText passwordEditText;
     private EditText confirmPasswordEditText;
 
-    private String IP = "192.168.0.118";
-    private String PORT = "3000";
+    Config config = new Config();
+    private String IP = config.IP;
+    private String PORT = config.PORT;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -28,8 +28,9 @@ public class WelcomeActivity extends AppCompatActivity {
     private String USER = "USER";
     private String USER_PREF_NAME = "USERNAME";
 
-    private String IP = "192.168.0.118";
-    private String PORT = "3000";
+    Config config = new Config();
+    private String IP = config.IP;
+    private String PORT = config.PORT;
 
 
     @Override

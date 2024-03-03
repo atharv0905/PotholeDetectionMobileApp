@@ -33,8 +33,12 @@ public class LoginActivity extends AppCompatActivity {
     String username = "";
     String password = "";
 
-    private String IP = "192.168.0.118";
-    private String PORT = "3000";
+    EditText editTextUsername;
+    EditText editTextPassword;
+    Config config = new Config();
+    private String IP = config.IP;
+    private String PORT = config.PORT;
+    private String userType = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,8 +46,8 @@ public class LoginActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences(USER_AUTHENTICATION_PREF_NAME, MODE_PRIVATE);
         userSharedPreferences = getSharedPreferences(USER_PREF_NAME, MODE_PRIVATE);
-        EditText editTextUsername = (EditText) findViewById(R.id.username_edittext);
-        EditText editTextPassword = (EditText) findViewById(R.id.password_login);
+        editTextUsername = (EditText) findViewById(R.id.username_edittext);
+        editTextPassword = (EditText) findViewById(R.id.password_login);
         ImageButton loginButton = (ImageButton) findViewById(R.id.login1);
         TextView signUpButton = (TextView) findViewById(R.id.signUpButton);
 
@@ -80,10 +84,15 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private boolean isValidLogin(String email, String password) {
+    private boolean isValidLogin(String username, String password) {
         // Add your login validation logic here
         // For simplicity, we consider it valid if both email and password are not empty
-        return !email.isEmpty() && !password.isEmpty();
+        if(username.contains("@emp")){
+            userType = "employee";
+        }else {
+            userType = "user";
+        }
+        return !username.isEmpty() && !password.isEmpty();
     }
 
     private void showToast(String message) {
@@ -93,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
     private class ApiCaller extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... params) {
-            String apiUrl = "http://"+ IP + ":" + PORT + "/user/login";
+            String apiUrl = "http://"+ IP + ":" + PORT + "/"+userType+"/login";
             String postData = params[0];
             try {
                 URL url = new URL(apiUrl);
@@ -143,7 +152,12 @@ public class LoginActivity extends AppCompatActivity {
             userEditor.apply();
 
             if(result.contains("Error")){
-//                Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
+                TextView errorMsg1 = (TextView) findViewById(R.id.errorMsg1);
+                TextView errorMsg2 = (TextView) findViewById(R.id.errorMsg2);
+                editTextUsername.setText("");
+                editTextPassword.setText("");
+                errorMsg1.setVisibility(View.VISIBLE);
+                errorMsg2.setVisibility(View.VISIBLE);
             }else{
                 Intent intent = new Intent(LoginActivity.this, UserMapActivity.class);
                 startActivity(intent);
