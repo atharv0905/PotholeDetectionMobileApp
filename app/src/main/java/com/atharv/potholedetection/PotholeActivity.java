@@ -60,6 +60,7 @@ public class PotholeActivity extends AppCompatActivity {
                     imageBitmap = (Bitmap) (data.getExtras().get("data"));
                     image.setImageBitmap(imageBitmap); // setting image on image view
                     new PredictPothole().execute(imageBitmap);
+                    new AddPotholeData().uploadImage(imageBitmap, "80", "70");
                     break;
             }
         }
