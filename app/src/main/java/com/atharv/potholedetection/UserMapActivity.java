@@ -3,6 +3,7 @@ package com.atharv.potholedetection;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -27,13 +28,28 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
+import com.codebyashish.googledirectionapi.AbstractRouting;
+import com.codebyashish.googledirectionapi.ErrorHandling;
+import com.codebyashish.googledirectionapi.RouteDrawing;
+import com.codebyashish.googledirectionapi.RouteInfoModel;
+import com.codebyashish.googledirectionapi.RouteListener;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.location.LocationServices;
+
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.maps.model.RoundCap;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class UserMapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class UserMapActivity extends AppCompatActivity implements OnMapReadyCallback, RouteListener {
 
     private SharedPreferences userSharedPreferences;
     SharedPreferences sharedPreferences;
@@ -44,13 +60,20 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
     private GoogleMap mMap;
     private LocationHelper locationHelper;
 
+    private AbstractRouting.TravelMode travelMode = AbstractRouting.TravelMode.DRIVING;
+
+    private Button driving, biking, walking;
     private ImageButton current_location_button;
     private Button logout;
     private Button addPotholeBtn;
+    private Button startNavigationBtn;
     double currentLatitude = 0, currentLongitude = 0;
     LatLng destinationLocation;
+    LatLng currentLatLng;
     private Marker currentLocationMarker;
     private Marker destinationLocationMarker;
+    PolylineOptions polylineOptions;
+    ArrayList<Polyline> polylines;
 
 
     // get current location of user
@@ -62,7 +85,7 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
                 // Handle the received latitude and longitude
                 currentLatitude = latitude;
                 currentLongitude = longitude;
-                LatLng currentLatLng = new LatLng(currentLatitude, currentLongitude);
+                currentLatLng = new LatLng(currentLatitude, currentLongitude);
                 if(currentLocationMarker == null){
                     MarkerOptions newCurrentLocationMarker = new MarkerOptions();
                     newCurrentLocationMarker.position(currentLatLng);
@@ -72,8 +95,8 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
                     currentLocationMarker.setPosition(currentLatLng);
                 }
 
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 20.0f));
+//                mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
+//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 20.0f));
             }
         };
 
@@ -124,12 +147,57 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
 
         });
     }
+
+    // generate route between current location and destination
+    private void getRoute(LatLng userLocation, LatLng destinationLocation) {
+
+        RouteDrawing routeDrawing = new RouteDrawing.Builder()
+                .context(UserMapActivity.this)  // pass your activity or fragment's context
+                .travelMode(travelMode)
+                .withListener(this).alternativeRoutes(true)
+                .waypoints(userLocation, destinationLocation)
+                .build();
+        routeDrawing.execute();
+        Toast.makeText(UserMapActivity.this, travelMode.toString(),Toast.LENGTH_SHORT).show();
+    }
+
+    private void navigate(){
+        if (locationHelper.checkLocationPermission()) {
+            if (locationHelper.isLocationEnabled()) {
+                locationHelper.startLocationUpdates(new LocationHelper.OnLocationListener() {
+                    @Override
+                    public void onLocationReceived(double latitude, double longitude) {
+                        // Handle continuous location updates here
+                        currentLatitude = latitude;
+                        currentLongitude = longitude;
+                        LatLng currentLatLng = new LatLng(currentLatitude, currentLongitude);
+                        if (currentLocationMarker == null) {
+                            MarkerOptions newCurrentLocationMarker = new MarkerOptions();
+                            newCurrentLocationMarker.position(currentLatLng);
+                            currentLocationMarker = mMap.addMarker(newCurrentLocationMarker);
+                        } else {
+                            currentLocationMarker.setPosition(currentLatLng);
+                        }
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
+                        getRoute(currentLatLng, destinationLocation);
+                        Toast.makeText(getApplicationContext(), "Location Updated", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                locationHelper.showEnableLocationDialog();
+            }
+        } else {
+            locationHelper.requestLocationPermission();
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_map);
 
         locationHelper = new LocationHelper(this, this);
+        getCurrentLocation();
 
         // Check location permission when the activity starts
         if (locationHelper.checkLocationPermission()) {
@@ -163,6 +231,8 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
                 if (locationHelper.checkLocationPermission()) {
                     if (locationHelper.isLocationEnabled()) {
                         getCurrentLocation();
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLatLng));
+                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 20.0f));
                     } else {
                         locationHelper.showEnableLocationDialog();
                     }
@@ -195,6 +265,39 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
             public void onClick(View v) {
                 Intent intent = new Intent(UserMapActivity.this, PotholeActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        driving = (Button) findViewById(R.id.driving);
+        biking = (Button) findViewById(R.id.biking);
+        walking = (Button) findViewById(R.id.walking);
+
+        driving.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                travelMode = AbstractRouting.TravelMode.DRIVING;
+            }
+        });
+        biking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                travelMode = AbstractRouting.TravelMode.BIKING;
+            }
+        });
+        walking.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                travelMode = AbstractRouting.TravelMode.WALKING;
+            }
+        });
+
+        startNavigationBtn = (Button) findViewById(R.id.startNavigationBtn);
+        startNavigationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(currentLatLng != null && destinationLocation != null){
+                    navigate();
+                }
             }
         });
     }
@@ -231,6 +334,42 @@ public class UserMapActivity extends AppCompatActivity implements OnMapReadyCall
         } else {
             Log.e("MapActivity", "GoogleMap object is null");
         }
+    }
+
+
+    @Override
+    public void onRouteFailure(ErrorHandling e) {
+        Toast.makeText(this, "Route Failed", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRouteStart() {
+        Toast.makeText(this, "Route Started", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onRouteSuccess(ArrayList<RouteInfoModel> list, int indexing) {
+        Toast.makeText(this, "Route Succeed", Toast.LENGTH_SHORT).show();
+        polylineOptions = new PolylineOptions();
+        polylines = new ArrayList<>();
+
+        for (int i = 0; i < list.size(); i++) {
+            if (i == indexing) {
+                Log.e("TAG", "onRoutingSuccess: routeIndexing" + indexing);
+                polylineOptions.color(Color.BLACK);
+                polylineOptions.width(12);
+                polylineOptions.addAll(list.get(indexing).getPoints());
+                polylineOptions.startCap(new RoundCap());
+                polylineOptions.endCap(new RoundCap());
+                Polyline polyline = mMap.addPolyline(polylineOptions);
+                polylines.add(polyline);
+            }
+        }
+    }
+
+    @Override
+    public void onRouteCancelled() {
+        Toast.makeText(this, "Route Cancelled", Toast.LENGTH_SHORT).show();
     }
 
     // Handle permission request result

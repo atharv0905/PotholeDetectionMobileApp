@@ -1,11 +1,12 @@
 package com.atharv.potholedetection;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.LocationManager;
 import android.provider.Settings;
 
@@ -30,6 +31,10 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class LocationHelper {
 
@@ -124,6 +129,32 @@ public class LocationHelper {
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
     }
 
+    public void startLocationUpdates(final LocationHelper.OnLocationListener listener) {
+        if (ContextCompat.checkSelfPermission(activity,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+            return;
+        }
+
+        LocationRequest locationRequest = new LocationRequest();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(100); // Update every 1 second
+        locationRequest.setFastestInterval(100);
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                super.onLocationResult(locationResult);
+                if (locationResult != null && locationResult.getLastLocation() != null) {
+                    Location location = locationResult.getLastLocation();
+                    listener.onLocationReceived(location.getLatitude(), location.getLongitude());
+                }
+            }
+        }, Looper.getMainLooper());
+    }
     public interface OnLocationListener {
         void onLocationReceived(double latitude, double longitude);
     }
@@ -139,6 +170,75 @@ public class LocationHelper {
             }
         };
     }
+
+    public void getAddressFromLocation(double latitude, double longitude, final OnAddressListener listener) {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            if (addresses != null && addresses.size() > 0) {
+                Address address = addresses.get(0);
+                String fullAddress = address.getAddressLine(0);
+                String city = address.getLocality();
+                String state = address.getAdminArea();
+                String country = address.getCountryName();
+                String postalCode = address.getPostalCode();
+                String knownName = address.getFeatureName();
+
+                // Construct the complete address string
+                StringBuilder stringBuilder = new StringBuilder();
+                if (fullAddress != null)
+                    stringBuilder.append(fullAddress).append(", ");
+//                if (city != null)
+//                    stringBuilder.append(city).append(", ");
+//                if (state != null)
+//                    stringBuilder.append(state).append(", ");
+//                if (country != null)
+//                    stringBuilder.append(country).append(", ");
+//                if (postalCode != null)
+//                    stringBuilder.append(postalCode).append(", ");
+//                if (knownName != null)
+//                    stringBuilder.append(knownName);
+
+                String completeAddress = stringBuilder.toString();
+
+                listener.onAddressReceived(completeAddress);
+            } else {
+                listener.onAddressReceived("Address not found");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            listener.onAddressReceived("Error retrieving address");
+        }
+    }
+
+    public interface OnAddressListener {
+        void onAddressReceived(String address);
+    }
+
+    public String getArea(String input) {
+        // Split the string into words
+        String[] words = input.split("\\s+");
+
+        // Calculate the index of the fifth word from the end
+        int index = words.length - 5;
+
+        // Check if the index is valid
+        if (index >= 0 && index < words.length) {
+            // Retrieve the word at the calculated index
+            String area = words[index];
+
+            // Remove punctuation marks from the extracted word
+            area = area.replaceAll("[^a-zA-Z]", ""); // This will remove all non-letter characters
+
+            // Return the cleaned area name
+            return area;
+        } else {
+            // If the index is out of bounds, return null or handle it accordingly
+            return null;
+        }
+    }
+
+
 
     public void addMarkerAndMoveCamera(LatLng latLng, float zoomLevel) {
         if (mMap != null) {
