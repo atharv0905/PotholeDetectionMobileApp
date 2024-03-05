@@ -6,7 +6,15 @@
     tools:context=".PotholeActivity">
 
     <ImageView
-        android:id="@+id/roadImage"
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/add_pothole_background"
+        android:scaleType="fitXY"
+        android:alpha="0.9"/>
+
+    <ImageView
+        android:id="@+id/roadImageOutline"
         android:layout_width="match_parent"
         android:layout_height="350dp"
         android:layout_marginRight="25dp"
@@ -15,15 +23,23 @@
         android:background="@drawable/image_drop"
         />
 
+    <ImageView
+        android:id="@+id/roadImage"
+        android:layout_width="320dp"
+        android:layout_height="310dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginTop="70dp"
+        />
+
     <Button
         android:id="@+id/openCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/roadImage"
-        android:layout_marginTop="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
         android:textSize="25dp"
-        android:text="Open Camera"
+        android:text="Take Picture"
         android:paddingVertical="15dp"
         />
 

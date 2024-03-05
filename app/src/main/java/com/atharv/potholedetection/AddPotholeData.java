@@ -20,7 +20,7 @@ public class AddPotholeData {
     Config config = new Config();
     private String IP = config.IP;
     private String PORT = config.PORT;
-    public void uploadImage(Bitmap imageBitmap,String latitude,String longitude) {
+    public void uploadImage(Bitmap imageBitmap,String latitude,String longitude, String reportedBy) {
         OkHttpClient client = new OkHttpClient();
         String url = "http://"+ IP + ":" + PORT + "/pothole/add";
         // Convert Bitmap to byte array output stream
@@ -33,6 +33,7 @@ public class AddPotholeData {
                         RequestBody.create(MediaType.parse("image/*"), outputStream.toByteArray()))
                 .addFormDataPart("latitude",latitude)
                 .addFormDataPart("longitude",longitude)
+                .addFormDataPart("reportedBy", reportedBy)
                 .build();
 
         Request request = new Request.Builder()

@@ -2,6 +2,7 @@ package com.atharv.potholedetection;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -16,6 +17,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.DialogInterface;
+import androidx.appcompat.app.AlertDialog;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,6 +50,10 @@ public class PotholeActivity extends AppCompatActivity implements OnMapReadyCall
     double currentLatitude = 0, currentLongitude = 0;
 
     LatLng currentLatLng;
+    private SharedPreferences userSharedPreferences;
+    private String USER = "USER";
+    private String USER_PREF_NAME = "USERNAME";
+    private String username = "";
     private final int CAMERA_REQUEST_CODE = 100;
     ImageView image;
     Bitmap imageBitmap;
@@ -91,7 +98,7 @@ public class PotholeActivity extends AppCompatActivity implements OnMapReadyCall
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pothole);
 
-
+        userSharedPreferences = getSharedPreferences(USER_PREF_NAME, MODE_PRIVATE);
         locationHelper = new LocationHelper(this, this);
 
         // Check location permission when the activity starts
@@ -129,7 +136,8 @@ public class PotholeActivity extends AppCompatActivity implements OnMapReadyCall
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AddPotholeData().uploadImage(imageBitmap, ""+currentLatitude, ""+currentLongitude);
+                username = userSharedPreferences.getString(USER, "");
+                new AddPotholeData().uploadImage(imageBitmap, ""+currentLatitude, ""+currentLongitude, username);
                 gmapContainer.setVisibility(View.GONE);
                 Uri uri = Uri.parse("android.resource://com.atharv.potholedetection/" + R.drawable.image_drop);
                 image.setImageURI(uri);
@@ -265,9 +273,15 @@ public class PotholeActivity extends AppCompatActivity implements OnMapReadyCall
                 gmapContainer.setVisibility(View.VISIBLE);
             }else {
                 Toast.makeText(getApplicationContext(), "It's not a pothole", Toast.LENGTH_LONG).show();
+                showAlert();
             }
 
         }
+
+    }
+
+
+    private void showAlert(){
 
     }
 }
